@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Subtable · Export your audience</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="src/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="export.html"><span class="brand-icon" aria-hidden="true">▦</span>subtable<span class="version">v1.0</span></a>
+    <span class="privacy"><span class="dot"></span> On your device. In your control.</span>
+  </header>
+  <main>
+    <div class="intro"><div class="eyebrow">YOUR AUDIENCE, TO GO</div><h1>A little less admin.<br>A clearer subscriber list.</h1><p>Turn your Patreon or Boosty audience into a tidy CSV.<br>Use the creator account you’re already signed in to.</p></div>
+    <div class="workspace">
+      <section class="card setup" aria-labelledby="setup-heading">
+        <div class="section-top"><span class="step">01</span><h2 id="setup-heading">Choose your source</h2><span id="connection-badge" class="badge">Not connected</span></div>
+        <div class="platforms"><span><i class="platform-mark patreon" aria-hidden="true">P</i>Patreon</span><span><i class="platform-mark boosty" aria-hidden="true">b</i>Boosty</span></div>
+        <label for="source-tab">Browser tab</label>
+        <div class="input-action"><select id="source-tab"><option value="">Finding your creator tabs…</option></select><button id="refresh-tabs" class="icon-button" title="Refresh tabs" aria-label="Refresh tabs">↻</button></div>
+        <p class="hint">Open your creator’s Audience or Subscribers page first.</p>
+        <div class="source-links"><a href="https://www.patreon.com/members" target="_blank" rel="noreferrer">Open Patreon ↗</a><a href="https://boosty.to" target="_blank" rel="noreferrer">Open Boosty ↗</a></div>
+        <button id="connect" class="button secondary full" disabled>Connect to this tab <span aria-hidden="true">→</span></button>
+        <div class="rule"></div>
+        <div class="section-top"><span class="step">02</span><h2>Make it yours</h2></div>
+        <fieldset id="export-options" disabled>
+          <label for="creator" id="creator-label">Creator ID</label>
+          <input id="creator" autocomplete="off" spellcheck="false" placeholder="Connect a tab to get started">
+          <p id="creator-hint" class="hint">Detected from your creator page when available.</p>
+          <div id="scope-field"><label for="scope">Audience</label><select id="scope"><option value="all">All members, including former members</option><option value="current">Current Patreon Audience filters</option></select><p id="scope-hint" class="hint" hidden>Current filters aren’t available. Refresh the Patreon Audience page, wait for its list to load, and reconnect. You can still export all members.</p></div>
+          <label for="delimiter">CSV separator</label><select id="delimiter"><option value=",">Comma (,)</option><option value=";">Semicolon (;)</option></select>
+          <label class="checkbox"><input type="checkbox" id="bom" checked><span>Excel-friendly UTF-8 encoding <small>Keeps names and non-Latin characters readable.</small></span></label>
+        </fieldset>
+        <button id="export" class="button primary full" disabled><span aria-hidden="true">↓</span> Prepare CSV</button>
+        <p class="footnote">Keep this tab and your source tab open during export.</p>
+      </section>
+      <section class="card output" aria-labelledby="output-heading">
+        <div class="section-top"><span class="step">03</span><h2 id="output-heading">Your export</h2><span class="format-tag">.CSV</span></div>
+        <div id="status-panel" class="status-panel" role="status" aria-live="polite" aria-atomic="true">
+          <div id="status-icon" class="status-icon" aria-hidden="true">↧</div>
+          <h3 id="status-title">Ready when you are</h3>
+          <p id="status-detail">Connect a creator tab, then prepare your subscriber table.</p>
+        </div>
+        <div id="progress-area" hidden><div class="progress-meta"><span id="progress-count">0 subscribers</span><span id="progress-pages">Page 0</span></div><progress id="progress" aria-label="Subscribers collected"></progress><button id="cancel" class="text-button">Cancel export</button></div>
+        <div id="result-area" hidden>
+          <div class="result-meta"><div><strong id="result-count">0</strong><span>subscribers</span></div><div><strong>17</strong><span>columns</span></div><div><strong>UTF-8</strong><span>encoding</span></div></div>
+          <div class="table-wrap"><table><caption>Preview · first 5 subscribers</caption><thead><tr><th>Name</th><th>Tier</th><th>Status</th></tr></thead><tbody id="preview"></tbody></table></div>
+          <p id="result-note" class="hint"></p>
+          <button id="download" class="button primary full">↓ Download CSV</button>
+          <p id="download-status" class="hint" role="status" aria-live="polite"></p>
+          <button id="clear" class="text-button">Clear subscriber data</button>
+        </div>
+        <div class="included"><span class="eyebrow">WHAT’S IN YOUR TABLE</span><div class="chips"><span>Name & email</span><span>Membership status</span><span>Subscription tier</span><span>Amounts & dates</span><span>Platform IDs</span></div><p>Only fields available to your creator account are included. Unavailable or hidden information stays blank.</p></div>
+      </section>
+    </div>
+    <footer><span>Built for creators. No server, no account, no analytics.</span><span>Patreon + Boosty <span class="footer-dot">·</span> Manifest V3</span></footer>
+  </main>
+</body>
+</html>

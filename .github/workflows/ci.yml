@@ -1,0 +1,80 @@
+name: Build and release extension
+
+on:
+  pull_request:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+jobs:
+  build:
+    name: Test and package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.package.outputs.version }}
+      filename: ${{ steps.package.outputs.filename }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      # No dependencies to install. Packaging also runs the manifest/source checks.
+      - name: Run tests
+        run: npm test
+
+      - name: Package extension and validate release version
+        id: package
+        env:
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        run: npm run package
+
+      - name: Keep extension ZIP
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: extension-${{ steps.package.outputs.version }}
+          path: dist/${{ steps.package.outputs.filename }}
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+
+  release:
+    name: Publish GitHub Release
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download tested extension ZIP
+        uses: actions/download-artifact@v8.0.2
+        with:
+          name: extension-${{ needs.build.outputs.version }}
+          path: dist
+
+      - name: Publish release with extension ZIP
+        uses: softprops/action-gh-release@v3.0.3
+        with:
+          tag_name: ${{ github.ref_name }}
+          target_commitish: ${{ github.sha }}
+          name: Subtable ${{ github.ref_name }}
+          files: dist/${{ needs.build.outputs.filename }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          # Keep existing assets intact when rerunning a release.
+          overwrite_files: false

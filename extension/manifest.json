@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Subtable — Subscriber CSV Export",
+  "version": "1.0.0",
+  "minimum_chrome_version": "106",
+  "description": "Export Patreon and Boosty subscribers to CSV using your logged-in creator session.",
+  "permissions": ["scripting", "downloads"],
+  "host_permissions": [
+    "https://www.patreon.com/*",
+    "https://patreon.com/*",
+    "https://boosty.to/*"
+  ],
+  "background": { "service_worker": "src/background.js", "type": "module" },
+  "content_scripts": [{
+    "matches": ["https://www.patreon.com/*", "https://patreon.com/*"],
+    "js": ["src/patreon-observer.js"],
+    "run_at": "document_start"
+  }],
+  "action": { "default_title": "Open subscriber exporter" },
+  "icons": { "16": "icons/16.png", "32": "icons/32.png", "48": "icons/48.png", "128": "icons/128.png" },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'; connect-src 'none'"
+  }
+}
