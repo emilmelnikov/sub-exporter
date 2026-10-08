@@ -26,7 +26,7 @@ export function createCsvDownloader({ downloads = chrome.downloads, onState = ()
       try {
         job.url = URL.createObjectURL(new Blob([toCsv(owner.rows, owner.options)], { type: "text/csv;charset=utf-8" }));
         job.id = await downloads.download({
-          url: job.url, filename: csvFilename(owner.job.platform, owner.job.creator), saveAs: true,
+          url: job.url, filename: csvFilename(), saveAs: true,
         });
       } catch {
         finish(job, "interrupted");

@@ -3,59 +3,74 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Subtable · Export your audience</title>
+  <title>Subtable · Your subscriber collection</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="src/app.js"></script>
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="export.html"><span class="brand-icon" aria-hidden="true">▦</span>subtable<span class="version">v1.0</span></a>
+    <div class="brand"><span class="brand-icon" aria-hidden="true">▦</span>subtable<span class="version">v1.1</span></div>
     <span class="privacy"><span class="dot"></span> On your device. In your control.</span>
   </header>
   <main>
-    <div class="intro"><div class="eyebrow">YOUR AUDIENCE, TO GO</div><h1>A little less admin.<br>A clearer subscriber list.</h1><p>Turn your Patreon or Boosty audience into a tidy CSV.<br>Use the creator account you’re already signed in to.</p></div>
+    <div class="intro"><div class="eyebrow">YOUR AUDIENCE, TOGETHER</div><h1>One table. Your whole audience.</h1><p>Import subscribers from Patreon and Boosty. Browse your collection, then download one CSV.</p></div>
     <div class="workspace">
       <section class="card setup" aria-labelledby="setup-heading">
-        <div class="section-top"><span class="step">01</span><h2 id="setup-heading">Choose your source</h2><span id="connection-badge" class="badge">Not connected</span></div>
-        <div class="platforms"><span><i class="platform-mark patreon" aria-hidden="true">P</i>Patreon</span><span><i class="platform-mark boosty" aria-hidden="true">b</i>Boosty</span></div>
+        <div class="section-top"><span class="step">01</span><h2 id="setup-heading">Import from a source</h2><span id="connection-badge" class="badge">Not connected</span></div>
         <label for="source-tab">Browser tab</label>
         <div class="input-action"><select id="source-tab"><option value="">Finding your creator tabs…</option></select><button id="refresh-tabs" class="icon-button" title="Refresh tabs" aria-label="Refresh tabs">↻</button></div>
-        <p class="hint">Open your creator’s Audience or Subscribers page first.</p>
         <div class="source-links"><a href="https://www.patreon.com/members" target="_blank" rel="noreferrer">Open Patreon ↗</a><a href="https://boosty.to" target="_blank" rel="noreferrer">Open Boosty ↗</a></div>
         <button id="connect" class="button secondary full" disabled>Connect to this tab <span aria-hidden="true">→</span></button>
-        <div class="rule"></div>
-        <div class="section-top"><span class="step">02</span><h2>Make it yours</h2></div>
-        <fieldset id="export-options" disabled>
+        <fieldset id="import-options" disabled>
           <label for="creator" id="creator-label">Creator ID</label>
           <input id="creator" autocomplete="off" spellcheck="false" placeholder="Connect a tab to get started">
           <p id="creator-hint" class="hint">Detected from your creator page when available.</p>
-          <div id="scope-field"><label for="scope">Audience</label><select id="scope"><option value="all">All members, including former members</option><option value="current">Current Patreon Audience filters</option></select><p id="scope-hint" class="hint" hidden>Current filters aren’t available. Refresh the Patreon Audience page, wait for its list to load, and reconnect. You can still export all members.</p></div>
-          <label for="delimiter">CSV separator</label><select id="delimiter"><option value=",">Comma (,)</option><option value=";">Semicolon (;)</option></select>
-          <label class="checkbox"><input type="checkbox" id="bom" checked><span>Excel-friendly UTF-8 encoding <small>Keeps names and non-Latin characters readable.</small></span></label>
+          <div id="scope-field"><label for="scope">Audience to import</label><select id="scope"><option value="all">All members, including former members</option><option value="current">Current Patreon Audience filters</option></select><p id="scope-hint" class="hint" hidden>Current filters aren’t available. Refresh the Patreon Audience page, wait for its list to load, and reconnect. You can still import all members.</p></div>
         </fieldset>
-        <button id="export" class="button primary full" disabled><span aria-hidden="true">↓</span> Prepare CSV</button>
-        <p class="footnote">Keep this tab and your source tab open during export.</p>
+        <button id="import" class="button primary full" disabled><span aria-hidden="true">＋</span> Import subscribers</button>
+        <p class="footnote">Keep both tabs open during import. Repeat with another source to grow your collection.</p>
       </section>
-      <section class="card output" aria-labelledby="output-heading">
-        <div class="section-top"><span class="step">03</span><h2 id="output-heading">Your export</h2><span class="format-tag">.CSV</span></div>
-        <div id="status-panel" class="status-panel" role="status" aria-live="polite" aria-atomic="true">
-          <div id="status-icon" class="status-icon" aria-hidden="true">↧</div>
-          <h3 id="status-title">Ready when you are</h3>
-          <p id="status-detail">Connect a creator tab, then prepare your subscriber table.</p>
-        </div>
-        <div id="progress-area" hidden><div class="progress-meta"><span id="progress-count">0 subscribers</span><span id="progress-pages">Page 0</span></div><progress id="progress" aria-label="Subscribers collected"></progress><button id="cancel" class="text-button">Cancel export</button></div>
-        <div id="result-area" hidden>
-          <div class="result-meta"><div><strong id="result-count">0</strong><span>subscribers</span></div><div><strong>17</strong><span>columns</span></div><div><strong>UTF-8</strong><span>encoding</span></div></div>
-          <div class="table-wrap"><table><caption>Preview · first 5 subscribers</caption><thead><tr><th>Name</th><th>Tier</th><th>Status</th></tr></thead><tbody id="preview"></tbody></table></div>
-          <p id="result-note" class="hint"></p>
-          <button id="download" class="button primary full">↓ Download CSV</button>
+      <section class="card collection" aria-labelledby="collection-heading">
+        <div class="section-top"><span class="step">02</span><h2 id="collection-heading">Your collection</h2><span class="format-tag">.CSV</span></div>
+        <div class="result-meta"><div><strong id="result-count">0</strong><span>subscribers</span></div><div><strong id="source-count">0</strong><span>sources</span></div><div><strong id="column-count">18</strong><span>columns</span></div></div>
+        <div id="source-summary" class="source-summary" aria-label="Imported sources"></div>
+        <div id="status-panel" class="status-panel" role="status" aria-live="polite" aria-atomic="true"><div id="status-icon" class="status-icon" aria-hidden="true">↧</div><div><h3 id="status-title">Build your collection</h3><p id="status-detail">Choose a source and import its subscribers. Each row will show where it came from.</p></div></div>
+        <div id="progress-area" hidden><div class="progress-meta"><span id="progress-count">0 subscribers</span><span id="progress-pages">Page 0</span></div><progress id="progress" aria-label="Subscribers collected"></progress><button id="cancel" class="text-button">Cancel import</button></div>
+        <div class="download-area">
+          <fieldset id="csv-options"><div class="csv-options"><div><label for="delimiter">CSV separator</label><select id="delimiter"><option value=",">Comma (,)</option><option value=";">Semicolon (;)</option></select></div><label class="checkbox"><input type="checkbox" id="bom" checked><span>Excel-friendly UTF-8 <small>Preserves non-Latin characters.</small></span></label></div></fieldset>
+          <button id="download" class="button primary full" disabled>↓ Download combined CSV</button>
+          <p id="download-note" class="hint">Import a source to start your combined CSV.</p>
           <p id="download-status" class="hint" role="status" aria-live="polite"></p>
-          <button id="clear" class="text-button">Clear subscriber data</button>
         </div>
-        <div class="included"><span class="eyebrow">WHAT’S IN YOUR TABLE</span><div class="chips"><span>Name & email</span><span>Membership status</span><span>Subscription tier</span><span>Amounts & dates</span><span>Platform IDs</span></div><p>Only fields available to your creator account are included. Unavailable or hidden information stays blank.</p></div>
       </section>
     </div>
-    <footer><span>Built for creators. No server, no account, no analytics.</span><span>Patreon + Boosty <span class="footer-dot">·</span> Manifest V3</span></footer>
+    <section class="card subscribers" aria-labelledby="table-heading">
+      <div class="section-top"><span class="step">03</span><h2 id="table-heading">Imported subscribers</h2><button id="clear" class="text-button danger" disabled>Clear all data</button></div>
+      <div class="table-tools">
+        <div class="search-field"><label for="table-search">Search subscribers</label><input type="search" id="table-search" placeholder="Name, email, tier, ID…" autocomplete="off"></div>
+        <div class="source-filter"><label for="browse-source">Source</label><select id="browse-source"><option value="">All sources</option></select></div>
+        <div class="page-size-field"><label for="page-size">Rows per page</label><select id="page-size"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></div>
+      </div>
+      <div class="table-meta"><p id="table-summary" role="status" aria-live="polite">0 imported</p><button id="reset-filters" class="text-button" hidden>Reset filters</button></div>
+      <div id="table-wrap" class="table-wrap" tabindex="0" aria-label="Subscriber table; scroll horizontally for more columns" hidden><table>
+        <caption class="sr-only">Imported subscribers. Sort with column headings or open Details to view all fields.</caption>
+        <thead><tr>
+          <th scope="col" data-sort="source" aria-sort="none"><button>Source</button></th>
+          <th scope="col" data-sort="name" aria-sort="ascending"><button>Name</button></th>
+          <th scope="col" data-sort="email" aria-sort="none"><button>Email</button></th>
+          <th scope="col" data-sort="tier" aria-sort="none"><button>Tier</button></th>
+          <th scope="col" data-sort="status" aria-sort="none"><button>Status</button></th>
+          <th scope="col" data-sort="amount" aria-sort="none"><button>Amount</button></th>
+          <th scope="col" data-sort="joined_at" aria-sort="none"><button>Joined</button></th>
+          <th scope="col"><span class="sr-only">Subscriber details</span></th>
+        </tr></thead><tbody id="subscriber-rows"></tbody>
+      </table></div>
+      <div id="table-empty" class="table-empty">Your imported subscribers will appear here.</div>
+      <div class="pagination"><span id="page-label">Page 1 of 1</span><div><button id="first-page" class="page-button" aria-label="First page" disabled>«</button><button id="previous-page" class="page-button" disabled>Previous</button><button id="next-page" class="page-button" disabled>Next</button><button id="last-page" class="page-button" aria-label="Last page" disabled>»</button></div></div>
+      <p class="hint">Re-imports update matching subscribers from the same source. Other imported rows stay in your collection.</p>
+    </section>
+    <footer><span>Local only. Download to keep a copy before clearing, reloading, or closing this tab.</span><span>Patreon + Boosty <span class="footer-dot">·</span> Manifest V3</span></footer>
   </main>
+  <dialog id="subscriber-dialog" aria-labelledby="details-title"><div class="dialog-heading"><h2 id="details-title">Subscriber details</h2><button id="close-details" class="icon-button" aria-label="Close subscriber details">×</button></div><dl id="subscriber-details"></dl></dialog>
 </body>
 </html>

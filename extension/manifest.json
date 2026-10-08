@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Subtable — Subscriber CSV Export",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "minimum_chrome_version": "106",
-  "description": "Export Patreon and Boosty subscribers to CSV using your logged-in creator session.",
+  "description": "Import Patreon and Boosty subscribers into one table, then download a combined CSV using your logged-in creator session.",
   "permissions": ["scripting", "downloads"],
   "host_permissions": [
     "https://www.patreon.com/*",

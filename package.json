@@ -1,6 +1,6 @@
 {
   "name": "sub-exporter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "Session-based Patreon and Boosty subscriber CSV exporter for Chrome Manifest V3",

@@ -67,12 +67,12 @@ function numberValue(value, divisor = 1) {
 
 export function normalizePatreon(payload, creator, currency = "") {
   if (!Array.isArray(payload?.data) || (payload.included != null && !Array.isArray(payload.included))) {
-    throw new Error("Patreon returned an unfamiliar member list. No CSV was created.");
+    throw new Error("Patreon returned an unfamiliar member list. No subscribers were added.");
   }
   const resources = new Map((payload.included ?? []).map((item) => [`${item.type}:${item.id}`, item]));
   const resolve = (ref) => ref && resources.get(`${ref.type}:${ref.id}`);
   return payload.data.map((member) => {
-    if (member?.type !== "member" || !member.id || !member.attributes) throw new Error("Patreon returned an unfamiliar member record. No CSV was created.");
+    if (member?.type !== "member" || !member.id || !member.attributes) throw new Error("Patreon returned an unfamiliar member record. No subscribers were added.");
     const a = member.attributes;
     const rel = member.relationships ?? {};
     const userRef = rel.user?.data;
@@ -94,9 +94,9 @@ export function normalizePatreon(payload, creator, currency = "") {
 }
 
 export function normalizeBoosty(payload, creator, currency = "") {
-  if (!Array.isArray(payload?.data)) throw new Error("Boosty returned an unfamiliar subscriber list. No CSV was created.");
+  if (!Array.isArray(payload?.data)) throw new Error("Boosty returned an unfamiliar subscriber list. No subscribers were added.");
   return payload.data.map((s) => {
-    if (s?.id == null || typeof s !== "object") throw new Error("Boosty returned an unfamiliar subscriber record. No CSV was created.");
+    if (s?.id == null || typeof s !== "object") throw new Error("Boosty returned an unfamiliar subscriber record. No subscribers were added.");
     return {
       platform: "boosty", creator, subscriber_id: String(s.id), user_id: String(s.id),
       name: s.name ?? "", email: s.email ?? "",
@@ -122,7 +122,7 @@ export function nextPage(platform, payload, currentUrl, received) {
       const url = new URL(typeof next === "string" ? next : next.href, current);
       if (!isMemberUrl(url) || url.origin !== current.origin || url.pathname !== current.pathname ||
           url.searchParams.get("filter[campaign_id]") !== current.searchParams.get("filter[campaign_id]") || url.username || url.password) {
-        throw new Error("Patreon returned an unexpected pagination link. Export stopped.");
+        throw new Error("Patreon returned an unexpected pagination link. Import stopped.");
       }
       return url;
     }
@@ -133,7 +133,7 @@ export function nextPage(platform, payload, currentUrl, received) {
       return current;
     }
     const total = totalFor(platform, payload);
-    // With a known total, an early end is a failure, never a successful partial CSV.
+    // With a known total, an early end is a failure, never a successful partial import.
     if (total != null && received < total && payload.data.length === 0) throw new Error("Patreon stopped returning members before its reported total. Please retry.");
     if (current.searchParams.has("page[cursor]")) {
       if (total != null && received < total) throw new Error("Patreon's next-page cursor is missing before the reported total.");

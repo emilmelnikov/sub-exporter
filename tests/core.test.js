@@ -15,16 +15,15 @@ test("CSV protects formulas, preserves Unicode and quotes delimiters/newlines", 
   assert.equal(csvCell(0), '"0"');
   assert.equal(csvCell(null), '""');
   const csv = toCsv([{ name: "Анна", amount: 0 }]);
-  assert.ok(csv.startsWith('\uFEFF"platform"'));
+  assert.ok(csv.startsWith('\uFEFF"source"'));
   assert.ok(csv.endsWith("\r\n"));
-  assert.equal(csv.split("\r\n")[0].split(",").length, 17);
+  assert.equal(csv.split("\r\n")[0].split(",").length, 18);
   assert.ok(toCsv([], { delimiter: ";", bom: false }).includes('"platform";"creator"'));
   assert.throws(() => toCsv([], { delimiter: "|" }));
 });
 
-test("filename cannot introduce paths or invalid file characters", () => {
-  const name = csvFilename("boosty", "../studio:名\\data", new Date("2026-10-07T12:00:00Z"));
-  assert.equal(name, "boosty--studio-data-subscribers-2026-10-07T12-00-00-000Z.csv");
+test("combined CSV filename is timestamped and contains no source-controlled text", () => {
+  assert.equal(csvFilename(new Date("2026-10-08T12:00:00Z")), "subtable-subscribers-2026-10-08T12-00-00-000Z.csv");
 });
 
 test("Patreon joins included user, pledge, tier and preserves absent fields", () => {
@@ -35,7 +34,7 @@ test("Patreon joins included user, pledge, tier and preserves absent fields", ()
   assert.equal(row.lifetime_amount, 24.68);
   assert.equal(row.currency, "EUR");
   assert.equal(row.last_payment_at, "");
-  assert.deepEqual(Object.keys(row).sort(), [...COLUMNS].sort());
+  assert.deepEqual(Object.keys(row).sort(), COLUMNS.filter((key) => key !== "source").sort());
   const hidden = patreonPage();
   hidden.data[0].attributes.email = null;
   hidden.included = [];
@@ -131,7 +130,7 @@ test("does not return partial data after an API failure", async () => {
 test("detects repeated pages, repeated links, inconsistent totals and missing cursors", async () => {
   await assert.rejects(collectSubscribers(boosty, { pause: immediate, request: async () => boostyPage([1], 3) }), /repeated a page/);
   let call = 0;
-  await assert.rejects(collectSubscribers(boosty, { pause: immediate, request: async () => boostyPage([++call], call === 1 ? 3 : 4) }), /changed during export/);
+  await assert.rejects(collectSubscribers(boosty, { pause: immediate, request: async () => boostyPage([++call], call === 1 ? 3 : 4) }), /changed during import/);
   await assert.rejects(collectSubscribers(patreon, { pause: immediate, request: async () => ({ ...patreonPage("x", { total: 2 }), links: { next: memberRequest(patreon).href } }) }), /repeated a pagination link/);
   call = 0;
   await assert.rejects(collectSubscribers(patreon, { pause: immediate, request: async () => patreonPage(`m-${++call}`, { total: 3, next: call === 1 ? "cursor" : null }) }), /cursor is missing/);

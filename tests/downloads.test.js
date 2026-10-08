@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createCsvDownloader } from "../extension/src/downloads.js";
 
-const owner = (creator) => ({ rows: [{ name: creator }], options: {}, job: { platform: "boosty", creator } });
+const owner = (creator) => ({ rows: [{ name: creator }], options: {} });
 function deferred() {
   let resolve, reject;
   const promise = new Promise((yes, no) => { resolve = yes; reject = no; });

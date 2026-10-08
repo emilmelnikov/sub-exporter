@@ -9,8 +9,8 @@ export async function collectSubscribers(context, { request, signal, onProgress 
   let expectedTotal = null;
   while (url) {
     signal?.throwIfAborted();
-    if (page >= 10000 || rows.size >= 1000000) throw new Error("Export limit reached. Narrow the audience selection and try again.");
-    if (visited.has(url.href)) throw new Error("The platform repeated a pagination link. Export stopped to avoid an incomplete CSV.");
+    if (page >= 10000 || rows.size >= 1000000) throw new Error("Import limit reached. Narrow the audience selection and try again.");
+    if (visited.has(url.href)) throw new Error("The platform repeated a pagination link. Import stopped to avoid adding incomplete data.");
     visited.add(url.href);
     const payload = await request(url);
     signal?.throwIfAborted();
@@ -21,16 +21,16 @@ export async function collectSubscribers(context, { request, signal, onProgress 
     for (const row of pageRows) rows.set(row.subscriber_id, row);
     const total = totalFor(context.platform, payload);
     if (total != null) {
-      if (expectedTotal != null && total !== expectedTotal) throw new Error("Your audience changed during export. Please run it again for a consistent CSV.");
+      if (expectedTotal != null && total !== expectedTotal) throw new Error("Your audience changed during import. Please run it again for consistent data.");
       expectedTotal = total;
     }
     page++;
     onProgress({ count: rows.size, total: expectedTotal, page });
-    if (pageRows.length && rows.size === before) throw new Error("The platform repeated a page of subscribers. Export stopped; please retry.");
+    if (pageRows.length && rows.size === before) throw new Error("The platform repeated a page of subscribers. Import stopped; please retry.");
     url = nextPage(context.platform, payload, url, rows.size);
     if (url) await pause(350, signal);
   }
-  if (expectedTotal != null && rows.size !== expectedTotal) throw new Error("The exported count does not match the platform total. Please retry; no CSV was created.");
+  if (expectedTotal != null && rows.size !== expectedTotal) throw new Error("The imported count does not match the platform total. Please retry; no subscribers were added.");
   signal?.throwIfAborted();
   return [...rows.values()];
 }

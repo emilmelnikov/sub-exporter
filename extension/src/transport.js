@@ -34,7 +34,7 @@ export async function pageRequest({ url: value, expectedOrigin, requestId, curre
     (patreon && url.origin === expectedOrigin && /^\/api\/(?:current_user|members|campaigns\/\d+\/members)\/?$/.test(url.pathname)) ||
     (boosty && url.origin === "https://api.boosty.to" && /^\/v1\/(?:user\/current|blog\/[\w.-]+\/subscribers)\/?$/.test(url.pathname))
   );
-  if (!allowed) return fail("URL", "This request is outside the subscriber export endpoints.");
+  if (!allowed) return fail("URL", "This request is outside the subscriber import endpoints.");
   const headers = { Accept: "application/json" };
   if (boosty) {
     // Read only Boosty's named session values; never copy credentials to the
@@ -84,7 +84,7 @@ export async function pageRequest({ url: value, expectedOrigin, requestId, curre
     }
     if (!contentType.includes("json")) return fail("FORMAT", "The platform returned a login or verification page. Open the source tab, complete it, and retry.");
     const text = await response.text();
-    if (text.length > 20 * 1024 * 1024) return fail("SIZE", "The platform response is too large to export safely.");
+    if (text.length > 20 * 1024 * 1024) return fail("SIZE", "The platform response is too large to import safely.");
     const data = JSON.parse(text);
     if (data?.errors?.length || data?.error) return fail("API", "The platform rejected the request. Check your creator access and reconnect.");
     return { ok: true, data };
@@ -102,7 +102,7 @@ export function cancelPageRequest(requestId) {
   globalThis.__subtablePending?.get(requestId)?.abort();
 }
 
-export function abortError() { return new DOMException("Export cancelled. No CSV was created.", "AbortError"); }
+export function abortError() { return new DOMException("Import cancelled. No subscribers were added.", "AbortError"); }
 
 export function delay(ms, signal) {
   return new Promise((resolve, reject) => {

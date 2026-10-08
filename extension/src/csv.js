@@ -1,5 +1,5 @@
 export const COLUMNS = [
-  "platform", "creator", "subscriber_id", "user_id", "name", "email",
+  "source", "platform", "creator", "subscriber_id", "user_id", "name", "email",
   "status", "tier", "amount", "currency", "lifetime_amount", "joined_at",
   "last_payment_at", "last_payment_status", "next_payment_at", "ended_at", "profile_url",
 ];
@@ -22,7 +22,6 @@ export function toCsv(rows, { delimiter = ",", bom = true } = {}) {
   ].join("\r\n") + "\r\n";
 }
 
-export function csvFilename(platform, creator, date = new Date()) {
-  const safe = String(creator).normalize("NFKC").replace(/[^a-zA-Z0-9_-]+/g, "-").slice(0, 64) || "creator";
-  return `${platform}-${safe}-subscribers-${date.toISOString().replace(/[:.]/g, "-")}.csv`;
+export function csvFilename(date = new Date()) {
+  return `subtable-subscribers-${date.toISOString().replace(/[:.]/g, "-")}.csv`;
 }
